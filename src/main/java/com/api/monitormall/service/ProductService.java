@@ -1,11 +1,15 @@
 package com.api.monitormall.service;
 
 import com.api.monitormall.entity.Product;
+import com.api.monitormall.exception.ProductNotFount;
 import com.api.monitormall.repository.ProductRepository;
 import com.api.monitormall.request.ProductCreate;
+import com.api.monitormall.request.ProductEdit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +23,7 @@ public class ProductService {
                 .name(create.getName())
                 .price(create.getPrice())
                 .brand(create.getBrand())
-                .size(create.getSize())
+                .inch(create.getInch())
                 .speaker(create.isSpeaker())
                 .usb(create.isUsb())
                 .vga(create.isVga())
@@ -35,4 +39,24 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public List<Product> findProduct() {
+        List<Product> products = productRepository.findAll();
+        return products;
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(ProductNotFount::new);
+        productRepository.delete(product);
+    }
+
+    @Transactional
+    public void edit(Long productId, ProductEdit request) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(ProductNotFount::new);
+
+
+        product.edit(request);
+    }
 }

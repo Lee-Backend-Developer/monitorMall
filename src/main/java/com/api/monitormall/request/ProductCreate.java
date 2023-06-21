@@ -9,7 +9,7 @@ public class ProductCreate {
     private String name;
     private int price;
     private String brand;
-    private double size;
+    private double inch;
     private boolean speaker;
     private boolean usb;
 
@@ -27,11 +27,11 @@ public class ProductCreate {
     private String img05;
 
     @Builder
-    public ProductCreate(String name, int price, String brand, double size, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
+    public ProductCreate(String name, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
         this.name = name;
         this.price = price;
         this.brand = brand;
-        this.size = size;
+        this.inch = inch;
         this.speaker = speaker;
         this.usb = usb;
         this.vga = vga;

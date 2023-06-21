@@ -1,12 +1,15 @@
 package com.api.monitormall.entity;
 
+import com.api.monitormall.request.ProductEdit;
 import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Getter
 @Entity
 public class Product {
     @Id
@@ -17,7 +20,7 @@ public class Product {
     private String name;
     private int price;
     private String brand;
-    private double size;
+    private double inch;
     private boolean speaker;
     private boolean usb;
 
@@ -35,12 +38,12 @@ public class Product {
     private String img05;
 
     @Builder
-    public Product(Long productId, String name, int price, String brand, double size, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
+    public Product(Long productId, String name, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.brand = brand;
-        this.size = size;
+        this.inch = inch;
         this.speaker = speaker;
         this.usb = usb;
         this.vga = vga;
@@ -52,5 +55,23 @@ public class Product {
         this.img03 = img03;
         this.img04 = img04;
         this.img05 = img05;
+    }
+
+    public void edit(ProductEdit edit){
+        this.name = edit.getName();
+        this.price = edit.getPrice();
+        this.brand = edit.getBrand();
+        this.inch = edit.getInch();
+        this.speaker = edit.isSpeaker();
+        this.usb = edit.isUsb();
+        this.vga = edit.isVga();
+        this.dvi = edit.isDvi();
+        this.hdmi = edit.isHdmi();
+        this.dp = edit.isDp();
+        this.img01 = edit.getImg01();
+        this.img02 = edit.getImg02();
+        this.img03 = edit.getImg03();
+        this.img04 = edit.getImg04();
+        this.img05 = edit.getImg05();
     }
 }
