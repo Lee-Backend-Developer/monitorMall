@@ -1,16 +1,21 @@
 package com.api.monitormall.entity;
 
 import com.api.monitormall.request.ProductEdit;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import static lombok.AccessLevel.*;
+
 @Getter
 @Entity
+@NoArgsConstructor(access = PROTECTED)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
