@@ -7,6 +7,7 @@ import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
 import com.api.monitormall.request.CartAdd;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,13 @@ class CartServiceTest {
         productRepository.save(product);
     }
 
+    @AfterEach
+    void delete() {
+        cartRepository.deleteAll();
+        productRepository.deleteAll();
+        memberRepository.deleteAll();
+    }
+
     @DisplayName("카트에 물건이 추가가 되어야한다")
     @Test
     void addCart_O() {
@@ -87,7 +95,7 @@ class CartServiceTest {
         cartRepository.save(cart);
 
         // when
-        Long memberId = 1L;
+        Long memberId = member.getMemberId();
         List<Cart> carts = cartService.getCart(memberId);
 
         // then
@@ -95,10 +103,26 @@ class CartServiceTest {
         assertEquals(1, cartRepository.count());
     }
 
+    @DisplayName("카트에 담긴 상품이 삭제가 되어야한다.")
+    @Test
+    void cartDelete_O() {
+        // given
+        Member member = getMember();
+        Product product = getProduct();
 
+        Cart cart = Cart.builder()
+                .member(member)
+                .product(product)
+                .build();
+        cartRepository.save(cart);
 
+        // when
+        Long cartId = cart.getCartId();
+        cartService.deleteCart(cartId);
 
-
+        // then
+        assertEquals(0, cartRepository.count());
+    }
 
 
     Member getMember() {

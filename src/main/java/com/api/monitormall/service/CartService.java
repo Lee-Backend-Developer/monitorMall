@@ -24,8 +24,6 @@ public class CartService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
-    // todo 카트에 물건 담기, 회원 아이디를 통해서 카트를 가져오기, 카트 번호를 통해서 삭제
-
     @Transactional
     public void addCart(CartAdd request) {
         Member member = memberRepository
@@ -44,5 +42,10 @@ public class CartService {
 
     public List<Cart> getCart(Long memberId) {
         return cartRepository.findCart(memberId);
+    }
+
+    @Transactional
+    public void deleteCart(Long cartId) {
+        cartRepository.deleteById(cartId);
     }
 }
