@@ -10,20 +10,16 @@ import java.util.List;
 public class OrderAdd {
     private Long memberId;
     private List<Long> productIds;
-    private Delivery delivery;
     private String deliveryAddress;
     private int totalPrice;
     private String cardNumber;
-    private Boolean isRefunded;
 
     @Builder
-    public OrderAdd(Long memberId, List<Long> productIds, Delivery delivery, String deliveryAddress, int totalPrice, String cardNumber, Boolean isRefunded) {
+    public OrderAdd(Long memberId, List<Long> productIds, String deliveryAddress, int totalPrice, String cardNumber) {
         this.memberId = memberId;
         this.productIds = productIds;
-        this.delivery = delivery;
         this.deliveryAddress = deliveryAddress;
         this.totalPrice = totalPrice;
         this.cardNumber = cardNumber;
-        this.isRefunded = isRefunded;
     }
 }

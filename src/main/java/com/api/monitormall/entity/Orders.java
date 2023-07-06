@@ -1,9 +1,9 @@
 package com.api.monitormall.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +11,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order {
+@ToString
+public class Orders {
 
     /*
     todo 내가 원하는 주문 서비스
@@ -23,32 +24,39 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long orderId;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private OrderNumber orderNumber;
+
     @OneToOne
     private Member member;
 
-    @OneToMany
-    private List<Product> product;
+    @ManyToOne
+    private Product product;
 
     @Enumerated(value = EnumType.STRING)
-    private Delivery delivery;
+    private Delivery delivery = Delivery.SHIPMENT;
 
     private String deliveryAddress;
     private int totalPrice;
     private String cardNumber;
-    private Boolean isRefunded; // 환불이면 true, 아니면 false
+
+    private Boolean isRefunded = false; // 환불이면 true, 아니면 false
 
     @Builder
-    public Order(Member member, List<Product> product, Delivery delivery, String deliveryAddress, int totalPrice, String cardNumber, Boolean isRefunded) {
+    public Orders(Member member, Product product, String deliveryAddress, int totalPrice, String cardNumber) {
         this.member = member;
         this.product = product;
-        this.delivery = delivery;
         this.deliveryAddress = deliveryAddress;
         this.totalPrice = totalPrice;
         this.cardNumber = cardNumber;
-        this.isRefunded = isRefunded;
+    }
+    public void setOrderNumber(OrderNumber orderNumber) {
+        this.orderNumber = orderNumber;
+        this.orderNumber.getOrderList().add(this);
     }
 
     public void refunded() {
         this.isRefunded = true;
     }
+
 }

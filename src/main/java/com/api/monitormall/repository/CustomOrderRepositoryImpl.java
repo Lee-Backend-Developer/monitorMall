@@ -1,7 +1,6 @@
 package com.api.monitormall.repository;
 
-import com.api.monitormall.entity.Order;
-import com.api.monitormall.entity.QOrder;
+import com.api.monitormall.entity.Orders;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.api.monitormall.entity.QOrder.*;
+import static com.api.monitormall.entity.QOrders.*;
 
 @Slf4j
 @Repository
@@ -18,9 +17,9 @@ public class CustomOrderRepositoryImpl implements CustomOrderRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Order> findOrders(Long memberId) {
-        return queryFactory.selectFrom(order)
-                .where(order.member.memberId.eq(memberId).and(order.isRefunded.eq(false)))
+    public List<Orders> findOrders(Long memberId) {
+        return queryFactory.selectFrom(orders)
+                .where(orders.member.memberId.eq(memberId).and(orders.isRefunded.eq(false)))
                 .fetch();
     }
 }

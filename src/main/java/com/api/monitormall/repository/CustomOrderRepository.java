@@ -1,10 +1,9 @@
 package com.api.monitormall.repository;
 
-import com.api.monitormall.entity.Order;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.api.monitormall.entity.Orders;
 
 import java.util.List;
 
 public interface CustomOrderRepository {
-    List<Order> findOrders(Long memberId);
+    List<Orders> findOrders(Long memberId);
 }
