@@ -1,5 +1,6 @@
 package com.api.monitormall.entity;
 
+import com.api.monitormall.service.MemberEdit;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -27,5 +28,13 @@ public class Member {
         this.loginId = loginId;
         this.password = password;
         this.address = address;
+    }
+
+    // === 편의 메소드 == //
+
+    public void edit(MemberEdit edit) {
+        this.name = edit.getName();
+        this.password = edit.getPassword();
+        this.address = edit.getAddress();
     }
 }

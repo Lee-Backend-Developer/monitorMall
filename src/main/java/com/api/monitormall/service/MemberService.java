@@ -32,6 +32,19 @@ public class MemberService {
         return member;
     }
 
+    public Member findMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFount::new);
+        return member;
+    }
+
+    @Transactional
+    public void edit(Long memberId, MemberEdit request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFount::new);
+        member.edit(request);
+    }
+
     @Transactional
     public void deleteMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -39,4 +52,6 @@ public class MemberService {
 
         memberRepository.delete(member);
     }
+
+
 }

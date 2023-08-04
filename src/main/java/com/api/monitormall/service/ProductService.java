@@ -40,8 +40,8 @@ public class ProductService {
     }
 
     public List<Product> findProduct() {
-        List<Product> products = productRepository.findAll();
-        return products;
+        List<Product> product = productRepository.findAll();
+        return product;
     }
 
     @Transactional

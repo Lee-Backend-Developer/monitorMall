@@ -63,6 +63,36 @@ class MemberServiceTest {
         assertEquals("hong1", member.getLoginId());
     }
 
+    @DisplayName("회원 수정이 되어야한다")
+    @Test
+    void edit_O() {
+        // given
+        Member member = Member.builder()
+                .loginId("hong1")
+                .password("1234")
+                .address("경기도 어느곳")
+                .name("홍길동")
+                .build();
+        memberRepository.save(member);
+
+        MemberEdit request = MemberEdit.builder()
+                .name("김길동")
+                .password("0000")
+                .address("서울 어느곳")
+                .build();
+
+
+        // when
+        memberService.edit(member.getMemberId(), request);
+
+
+        // then
+        assertEquals(member.getName(), "김길동");
+        assertEquals(member.getPassword(), "0000");
+        assertEquals(member.getAddress(), "서울 어느곳");
+
+    }
+
     @DisplayName("회원이 삭제가 되어야한다.")
     @Test
     void delete_O() {
