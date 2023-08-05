@@ -21,7 +21,7 @@ public class Orders {
     */
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 public class OrderNumber {
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long orderNumberId;
 
