@@ -9,10 +9,12 @@ import lombok.Data;
 public class CartAdd {
     private Long memberId;
     private Long productId;
+    private int count;
 
     @Builder
-    public CartAdd(Long memberId, Long productId) {
+    public CartAdd(Long memberId, Long productId, int count) {
         this.memberId = memberId;
         this.productId = productId;
+        this.count = count;
     }
 }

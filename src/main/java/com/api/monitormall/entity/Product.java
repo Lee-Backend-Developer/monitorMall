@@ -23,6 +23,7 @@ public class Product {
 
     // 기본 정보
     private String name;
+    private int count;
     private int price;
     private String brand;
     private double inch;
@@ -43,9 +44,9 @@ public class Product {
     private String img05;
 
     @Builder
-    public Product(Long productId, String name, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
-        this.productId = productId;
+    public Product(String name, int count, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
         this.name = name;
+        this.count = count;
         this.price = price;
         this.brand = brand;
         this.inch = inch;
@@ -60,6 +61,11 @@ public class Product {
         this.img03 = img03;
         this.img04 = img04;
         this.img05 = img05;
+    }
+
+    //==편의 메소드 ==
+    public void minus(int count) {
+        this.count = this.count - count;
     }
 
     public void edit(ProductEdit edit){

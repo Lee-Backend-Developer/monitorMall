@@ -45,6 +45,7 @@ class CartServiceTest {
         Product product = Product.builder()
                 .name("테스트 27인치")
                 .price(300000)
+                .count(1)
                 .brand("dell")
                 .inch(27)
                 .speaker(true)
@@ -72,12 +73,14 @@ class CartServiceTest {
         CartAdd cart = CartAdd.builder()
                 .memberId(memberId)
                 .productId(productId)
+                .count(1)
                 .build();
 
         // when
         cartService.addCart(cart);
 
         // then
+        assertEquals(0, getProduct().getCount());
         assertEquals(1, cartRepository.count());
     }
 
