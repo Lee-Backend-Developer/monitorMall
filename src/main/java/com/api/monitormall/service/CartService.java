@@ -37,18 +37,7 @@ public class CartService {
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(ProductNotFount::new);
 
-        if(product.getCount() <= 0) { // 상품이 없을경우 카트에 담길수 없음
-            throw new ProductAddError();
-        }
-
-        // 상품에 수량보다 더 카트에 담을경우 에러
-        long countChk = product.getCount() - request.getCount();
-        log.info("countChk => {}", countChk);
-        log.info("product count => {}", product.getCount());
-
-        if(countChk < 0 ) {
-            throw new ProductCountError(product.getCount());
-        }
+        productValidation(product, request.getCount());
 
         product.minus(request.getCount());
 
@@ -59,8 +48,27 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    private static void productValidation(Product product, int count) {
+        if(product.getCount() <= 0) { // 상품이 없을경우 카트에 담길수 없음
+            throw new ProductAddError();
+        }
+
+        // 상품에 수량보다 더 카트에 담을경우 에러
+        long countChk = product.getCount() - count;
+        log.info("countChk => {}", countChk);
+        log.info("product count => {}", product.getCount());
+
+        if(countChk < 0 ) {
+            throw new ProductCountError(product.getCount());
+        }
+    }
+
     public List<Cart> getCart(Long memberId) {
         return cartRepository.findCart(memberId);
+    }
+
+    public void cartCntEdit(Long cartId, Long productId, Long cnt) {
+
     }
 
     @Transactional

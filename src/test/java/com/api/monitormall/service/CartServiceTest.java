@@ -3,6 +3,8 @@ package com.api.monitormall.service;
 import com.api.monitormall.entity.Cart;
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.entity.Product;
+import com.api.monitormall.exception.ProductCountError;
+import com.api.monitormall.exception.ProductNotFount;
 import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
@@ -82,6 +84,24 @@ class CartServiceTest {
         // then
         assertEquals(0, getProduct().getCount());
         assertEquals(1, cartRepository.count());
+    }
+    @DisplayName("물건 수량이 부족할 경우 카트에 담을때 오류가 발생해야됨")
+    @Test
+    void addCart_X() {
+        // given
+        Long memberId = getMember().getMemberId();
+        Long productId = getProduct().getProductId();
+
+        CartAdd cart = CartAdd.builder()
+                .memberId(memberId)
+                .productId(productId)
+                .count(2)
+                .build();
+
+        // expected
+        assertThrows(ProductCountError.class, () -> {
+            cartService.addCart(cart);
+        });
     }
 
     @DisplayName("카트 가져오기")
