@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -18,7 +20,7 @@ public class Cart {
     @OneToOne
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private Product product;
 
     @Builder

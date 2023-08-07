@@ -4,10 +4,7 @@ package com.api.monitormall.service;
 import com.api.monitormall.entity.Cart;
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.entity.Product;
-import com.api.monitormall.exception.MemberNotFount;
-import com.api.monitormall.exception.ProductAddError;
-import com.api.monitormall.exception.ProductCountError;
-import com.api.monitormall.exception.ProductNotFount;
+import com.api.monitormall.exception.*;
 import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,18 +32,22 @@ public class CartService {
                 .findById(request.getMemberId())
                 .orElseThrow(MemberNotFount::new);
 
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(ProductNotFount::new);
+        List<Product> products = request.getProductId() // 요청으로 제품이 올 때 제품이 존재하는지 검증
+                .stream()
+                .map(productId -> productRepository.findById(productId).orElseThrow(ProductNotFount::new))
+                .collect(Collectors.toList());
 
-        productValidation(product, request.getCount());
+//        productValidation(product, request.getCount());
+//
+//        product.minus(request.getCount()); // 제품 재고가 빠지는지 아닌지 확인
 
-        product.minus(request.getCount());
-
-        Cart cart = Cart.builder()
-                .member(member)
-                .product(product)
-                .build();
-        cartRepository.save(cart);
+        products.forEach(product -> {
+            Cart cart = Cart.builder()
+                    .member(member)
+                    .product(product)
+                    .build();
+            cartRepository.save(cart);
+        });
     }
 
     private static void productValidation(Product product, int count) {
@@ -68,6 +70,8 @@ public class CartService {
     }
 
     public void cartCntEdit(Long cartId, Long productId, Long cnt) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFount::new);
+        cart.getProduct();
 
     }
 

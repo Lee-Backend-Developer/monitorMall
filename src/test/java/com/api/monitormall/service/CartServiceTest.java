@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,6 +57,19 @@ class CartServiceTest {
                 .img01("/image/product.jpg")
                 .build();
         productRepository.save(product);
+
+        Product product02 = Product.builder()
+                .name("테스트 32인치")
+                .price(500000)
+                .count(1)
+                .brand("dell")
+                .inch(32)
+                .speaker(true)
+                .usb(true)
+                .dp(true)
+                .img01("/image/product02.jpg")
+                .build();
+        productRepository.save(product02);
     }
 
     @AfterEach
@@ -65,16 +79,19 @@ class CartServiceTest {
         memberRepository.deleteAll();
     }
 
-    @DisplayName("카트에 물건이 추가가 되어야한다")
+    @DisplayName("카트에 여러 물건이 추가가 되어야한다")
     @Test
     void addCart_O() {
         // given
         Long memberId = getMember().getMemberId();
-        Long productId = getProduct().getProductId();
+        List<Long> productIds = new ArrayList<>();
+
+        getProducts()
+                .forEach(product -> productIds.add(product.getProductId()));
 
         CartAdd cart = CartAdd.builder()
                 .memberId(memberId)
-                .productId(productId)
+                .productId(productIds)
                 .count(1)
                 .build();
 
@@ -82,19 +99,21 @@ class CartServiceTest {
         cartService.addCart(cart);
 
         // then
-        assertEquals(0, getProduct().getCount());
-        assertEquals(1, cartRepository.count());
+        assertEquals(1, getProduct().getCount());
+        assertEquals(2, cartRepository.count());
     }
+
     @DisplayName("물건 수량이 부족할 경우 카트에 담을때 오류가 발생해야됨")
     @Test
     void addCart_X() {
         // given
         Long memberId = getMember().getMemberId();
-        Long productId = getProduct().getProductId();
+        List<Long> productIds = new ArrayList<>();
+        productIds.add(getProduct().getProductId());
 
         CartAdd cart = CartAdd.builder()
                 .memberId(memberId)
-                .productId(productId)
+                .productId(productIds)
                 .count(2)
                 .build();
 
@@ -122,7 +141,7 @@ class CartServiceTest {
         List<Cart> carts = cartService.getCart(memberId);
 
         // then
-        assertEquals(1, carts.size());
+        assertEquals(2, carts.size());
         assertEquals(1, cartRepository.count());
     }
 
@@ -154,5 +173,9 @@ class CartServiceTest {
 
     Product getProduct() {
         return productRepository.findAll().get(0);
+    }
+
+    List<Product> getProducts() {
+        return productRepository.findAll();
     }
 }
