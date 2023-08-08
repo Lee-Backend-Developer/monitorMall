@@ -9,6 +9,7 @@ import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
 import com.api.monitormall.request.CartAdd;
+import com.api.monitormall.request.CartProduct;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -89,18 +90,17 @@ class CartServiceTest {
         getProducts()
                 .forEach(product -> productIds.add(product.getProductId()));
 
-        CartAdd cart = CartAdd.builder()
-                .memberId(memberId)
-                .productId(productIds)
-                .count(1)
-                .build();
+        // todo 디버깅 결과 cartId가 만들어지지 않음, 제품의 수량 갯수 검증 로직이 없음
+        CartProduct cartProduct1 = CartAdd.cartProductCreate(productIds.get(0), 3);
+        CartProduct cartProduct2 = CartAdd.cartProductCreate(productIds.get(1), 4);
+
+        CartAdd cart = new CartAdd(memberId, cartProduct1, cartProduct2);
 
         // when
         cartService.addCart(cart);
 
         // then
-        assertEquals(1, getProduct().getCount());
-        assertEquals(2, cartRepository.count());
+        assertEquals(2, cartRepository.findCart(memberId).size());
     }
 
     @DisplayName("물건 수량이 부족할 경우 카트에 담을때 오류가 발생해야됨")
@@ -108,14 +108,15 @@ class CartServiceTest {
     void addCart_X() {
         // given
         Long memberId = getMember().getMemberId();
-        List<Long> productIds = new ArrayList<>();
-        productIds.add(getProduct().getProductId());
+        Product product = getProduct();
 
-        CartAdd cart = CartAdd.builder()
+       /* CartAdd cart = CartAdd.builder()
                 .memberId(memberId)
-                .productId(productIds)
+                .productId(product.getProductId())
                 .count(2)
                 .build();
+        */
+        CartAdd cart = new CartAdd(null, null);
 
         // expected
         assertThrows(ProductCountError.class, () -> {

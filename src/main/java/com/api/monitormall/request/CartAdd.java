@@ -5,18 +5,22 @@ import com.api.monitormall.entity.Product;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Data
 public class CartAdd {
     private Long memberId;
-    private List<Long> productId;
-    private int count;
+    private List<CartProduct> products = new ArrayList<>();
 
-    @Builder
-    public CartAdd(Long memberId, List<Long> productId, int count) {
+    public CartAdd(Long memberId, CartProduct... products) {
         this.memberId = memberId;
-        this.productId = productId;
-        this.count = count;
+        Arrays.stream(products).forEach(product -> this.products.add(product));
+    }
+
+    public static CartProduct cartProductCreate(Long productId, int count) {
+        CartProduct cartProduct = new CartProduct(productId, count);
+        return cartProduct;
     }
 }

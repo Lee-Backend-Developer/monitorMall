@@ -9,6 +9,7 @@ import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
 import com.api.monitormall.request.CartAdd;
+import com.api.monitormall.request.CartProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,9 +33,11 @@ public class CartService {
                 .findById(request.getMemberId())
                 .orElseThrow(MemberNotFount::new);
 
-        List<Product> products = request.getProductId() // 요청으로 제품이 올 때 제품이 존재하는지 검증
+        List<CartProduct> requestProducts = request.getProducts();
+        List<Product> products = requestProducts // 요청으로 제품이 올 때 제품이 존재하는지 검증
                 .stream()
-                .map(productId -> productRepository.findById(productId).orElseThrow(ProductNotFount::new))
+                .map(cartProduct -> productRepository.findById(cartProduct.getProductId())
+                        .orElseThrow(ProductNotFount::new))
                 .collect(Collectors.toList());
 
 //        productValidation(product, request.getCount());
