@@ -4,7 +4,6 @@ import com.api.monitormall.entity.Cart;
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.entity.Product;
 import com.api.monitormall.exception.ProductCountError;
-import com.api.monitormall.exception.ProductNotFount;
 import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
@@ -49,7 +48,7 @@ class CartServiceTest {
         Product product = Product.builder()
                 .name("테스트 27인치")
                 .price(300000)
-                .count(1)
+                .count(5)
                 .brand("dell")
                 .inch(27)
                 .speaker(true)
@@ -62,7 +61,7 @@ class CartServiceTest {
         Product product02 = Product.builder()
                 .name("테스트 32인치")
                 .price(500000)
-                .count(1)
+                .count(10)
                 .brand("dell")
                 .inch(32)
                 .speaker(true)
@@ -99,7 +98,7 @@ class CartServiceTest {
         cartService.addCart(cart);
 
         // then
-        assertEquals(2, cartRepository.findCart(memberId).size());
+        assertEquals(2, cartRepository.findCarts(memberId).size());
     }
 
     @DisplayName("물건 수량이 부족할 경우 카트에 담을때 오류가 발생해야됨")
@@ -112,8 +111,8 @@ class CartServiceTest {
         getProducts()
                 .forEach(product -> productIds.add(product.getProductId()));
 
-        CartProduct cartProduct1 = CartAdd.cartProductCreate(productIds.get(0), 2);
-        CartProduct cartProduct2 = CartAdd.cartProductCreate(productIds.get(1), 3);
+        CartProduct cartProduct1 = CartAdd.cartProductCreate(productIds.get(0), 10);
+        CartProduct cartProduct2 = CartAdd.cartProductCreate(productIds.get(1), 4);
 
         CartAdd cart = new CartAdd(memberId, cartProduct1, cartProduct2);
 
@@ -144,6 +143,27 @@ class CartServiceTest {
         // then
         assertEquals(1, carts.size());
         assertEquals(1, cartRepository.count());
+    }
+
+    @DisplayName("카트에 담긴 상품이 갯수가 수정이 되어야한다.")
+    @Test
+    void cartCntEdit_O() {
+        // given
+        Member member = getMember();
+        Product product = getProduct();
+
+        Cart cart = Cart.builder()
+                .member(member)
+                .product(product)
+                .count(1)
+                .build();
+        cartRepository.save(cart);
+
+        // when
+        cartService.cartCntEdit(cart.getCartId(), cart.getProduct().getProductId(), 4);
+
+        // then
+        assertEquals(4, cart.getCount());
     }
 
     @DisplayName("카트에 담긴 상품이 삭제가 되어야한다.")

@@ -31,4 +31,9 @@ public class Cart {
         this.product = product;
         this.count = count;
     }
+
+    //== 편의 메소드 ==
+    public void setCount(int count) {
+        this.count = count;
+    }
 }

@@ -50,13 +50,14 @@ public class CartService {
     }
 
     public List<Cart> getCart(Long memberId) {
-        return cartRepository.findCart(memberId);
+        return cartRepository.findCarts(memberId);
     }
 
-    public void cartCntEdit(Long cartId, Long productId, Long cnt) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFount::new);
-        cart.getProduct();
-
+    @Transactional
+    public void cartCntEdit(Long cartId, Long productId, int cnt) {
+        Cart cart = cartRepository.findCart(cartId, productId)
+                .orElseThrow(CartNotFount::new);
+        cart.setCount(cnt);
     }
 
     @Transactional
