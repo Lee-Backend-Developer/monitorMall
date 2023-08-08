@@ -23,10 +23,12 @@ public class Cart {
     @OneToOne
     private Product product;
 
+    private int count;
+
     @Builder
-    public Cart(Long cartId, Member member, Product product) {
-        this.cartId = cartId;
+    public Cart(Member member, Product product, int count) {
         this.member = member;
         this.product = product;
+        this.count = count;
     }
 }

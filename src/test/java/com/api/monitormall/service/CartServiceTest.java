@@ -90,9 +90,8 @@ class CartServiceTest {
         getProducts()
                 .forEach(product -> productIds.add(product.getProductId()));
 
-        // todo 디버깅 결과 cartId가 만들어지지 않음, 제품의 수량 갯수 검증 로직이 없음
-        CartProduct cartProduct1 = CartAdd.cartProductCreate(productIds.get(0), 3);
-        CartProduct cartProduct2 = CartAdd.cartProductCreate(productIds.get(1), 4);
+        CartProduct cartProduct1 = CartAdd.cartProductCreate(productIds.get(0), 1);
+        CartProduct cartProduct2 = CartAdd.cartProductCreate(productIds.get(1), 1);
 
         CartAdd cart = new CartAdd(memberId, cartProduct1, cartProduct2);
 
@@ -108,15 +107,15 @@ class CartServiceTest {
     void addCart_X() {
         // given
         Long memberId = getMember().getMemberId();
-        Product product = getProduct();
+        List<Long> productIds = new ArrayList<>();
 
-       /* CartAdd cart = CartAdd.builder()
-                .memberId(memberId)
-                .productId(product.getProductId())
-                .count(2)
-                .build();
-        */
-        CartAdd cart = new CartAdd(null, null);
+        getProducts()
+                .forEach(product -> productIds.add(product.getProductId()));
+
+        CartProduct cartProduct1 = CartAdd.cartProductCreate(productIds.get(0), 2);
+        CartProduct cartProduct2 = CartAdd.cartProductCreate(productIds.get(1), 3);
+
+        CartAdd cart = new CartAdd(memberId, cartProduct1, cartProduct2);
 
         // expected
         assertThrows(ProductCountError.class, () -> {
