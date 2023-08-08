@@ -133,6 +133,7 @@ class CartServiceTest {
         Cart cart = Cart.builder()
                 .member(member)
                 .product(product)
+                .count(1)
                 .build();
         cartRepository.save(cart);
 
@@ -141,7 +142,7 @@ class CartServiceTest {
         List<Cart> carts = cartService.getCart(memberId);
 
         // then
-        assertEquals(2, carts.size());
+        assertEquals(1, carts.size());
         assertEquals(1, cartRepository.count());
     }
 
