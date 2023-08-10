@@ -3,7 +3,7 @@ package com.api.monitormall.service;
 import com.api.monitormall.entity.Cart;
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.entity.Product;
-import com.api.monitormall.exception.ProductCountError;
+import com.api.monitormall.exception.CountError;
 import com.api.monitormall.repository.CartRepository;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.repository.ProductRepository;
@@ -117,7 +117,7 @@ class CartServiceTest {
         CartAdd cart = new CartAdd(memberId, cartProduct1, cartProduct2);
 
         // expected
-        assertThrows(ProductCountError.class, () -> {
+        assertThrows(CountError.class, () -> {
             cartService.addCart(cart);
         });
     }

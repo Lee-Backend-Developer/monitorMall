@@ -1,16 +1,8 @@
 package com.api.monitormall.service;
 
-import com.api.monitormall.entity.Member;
-import com.api.monitormall.entity.Orders;
-import com.api.monitormall.entity.OrderNumber;
-import com.api.monitormall.entity.Product;
-import com.api.monitormall.exception.MemberNotFount;
-import com.api.monitormall.exception.OrderNotFount;
-import com.api.monitormall.exception.ProductNotFount;
-import com.api.monitormall.repository.MemberRepository;
-import com.api.monitormall.repository.OrderNumberRepository;
-import com.api.monitormall.repository.OrderRepository;
-import com.api.monitormall.repository.ProductRepository;
+import com.api.monitormall.entity.*;
+import com.api.monitormall.exception.*;
+import com.api.monitormall.repository.*;
 import com.api.monitormall.request.OrderAdd;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,32 +21,44 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderNumberRepository orderNumberRepository;
     private final MemberRepository memberRepository;
-    private final ProductRepository productRepository;
+    private final CartRepository cartRepository;
 
     // 주문 생성, 주문 조회, 주문 환불
     @Transactional
     public void orderAdd(OrderAdd request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(MemberNotFount::new);
-        List<Product> products = request.getProductIds()
-                .stream()
-                .map(productId -> productRepository.findById(productId)
-                        .orElseThrow(ProductNotFount::new))
-                .collect(Collectors.toList());
+
+        List<Cart> carts = cartRepository.findByMemberId(request.getMemberId());
+
+        if(carts.size() == 0 ) {
+            throw new OrderCartError();
+        }
+        carts.forEach(cart -> { // 상품 검증
+            Product product = cart.getProduct();
+            if(cart.getCount() > product.getCount()) {
+                throw new CountError(product.getCount());
+            }
+        });
 
         OrderNumber orderNumber = new OrderNumber();
         orderNumberRepository.save(orderNumber);
 
-        for (Product product : products) {
+        carts.forEach(cart -> {
+            Product product = cart.getProduct();
+
             Orders order = Orders.builder()
+                    .orderNumber(orderNumber)
                     .member(member)
                     .product(product)
+                    .deliveryAddress(request.getDeliveryAddress())
+                    .totalPrice(product.getPrice())
                     .cardNumber(request.getCardNumber())
                     .build();
             orderRepository.save(order);
-            order.setOrderNumber(orderNumber);
-        }
 
+            cartRepository.deleteById(cart.getCartId());
+        });
     }
 
     public List<Orders> getOrder(Long memberId) {

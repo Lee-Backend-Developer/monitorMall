@@ -9,4 +9,7 @@ public interface CustomCartRepository {
     List<Cart> findCarts(Long memberId);
 
     Optional<Cart> findCart(Long cartId, Long productId);
+
+    List<Cart> findByMemberId(Long memberId);
+
 }

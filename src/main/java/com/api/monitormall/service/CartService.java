@@ -58,6 +58,7 @@ public class CartService {
         Cart cart = cartRepository.findCart(cartId, productId)
                 .orElseThrow(CartNotFount::new);
         cart.setCount(cnt);
+        //todo 카트 제품 수량 수정할 때 검증 구현해야됨
     }
 
     @Transactional
@@ -76,7 +77,7 @@ public class CartService {
         log.info("product count => {}", product.getCount());
 
         if(countChk < 0 ) {
-            throw new ProductCountError(product.getCount());
+            throw new CountError(product.getCount());
         }
     }
 }

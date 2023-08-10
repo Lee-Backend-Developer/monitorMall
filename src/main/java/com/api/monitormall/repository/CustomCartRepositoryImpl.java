@@ -25,6 +25,14 @@ public class CustomCartRepositoryImpl implements CustomCartRepository {
                 .where(cart.member.memberId.eq(memberId)).fetch();
     }
 
+    // todo Optional 검토 해봐야됨
+    @Override
+    public List<Cart> findByMemberId(Long memberId) {
+        return queryFactory.selectFrom(cart)
+                .where(cart.member.memberId.eq(memberId))
+                .fetch();
+    }
+
     @Override
     public Optional<Cart> findCart(Long cartId, Long productId) {
         return Optional.of(queryFactory.selectFrom(cart)
