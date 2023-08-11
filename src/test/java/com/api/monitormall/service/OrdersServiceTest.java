@@ -165,13 +165,23 @@ class OrdersServiceTest {
     @Test
     void refunded_o() {
         // given
-
+        OrderNumber orderNumber = new OrderNumber();
+        Member member = getMember();
+        Product product = getProduct();
+        Orders order = Orders.builder()
+                .orderNumber(orderNumber)
+                .member(member)
+                .product(product)
+                .deliveryAddress("경기도")
+                .totalPrice(product.getPrice())
+                .build();
+        orderRepository.save(order);
 
         // when
-
+        orderService.refunded(order.getOrderId());
 
         // then
-
+        assertEquals(true, orderRepository.findById(order.getOrderId()).get().getIsRefunded());
     }
 
     Member getMember() {
