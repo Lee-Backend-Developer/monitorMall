@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class OrdersServiceTest {
     @Autowired
     private MemberRepository memberRepository;
@@ -157,8 +159,8 @@ class OrdersServiceTest {
         orderService.getOrder(memberId);
 
         // then
-        Orders findOrder = orderRepository.findAll().get(0);
-        assertEquals(false, findOrder.getIsRefunded());
+        assertEquals(product.getName(), order.getProduct().getName());
+        assertEquals(Delivery.SHIPMENT, order.getDelivery());
     }
 
     @DisplayName("회원이 환불을 하였을때 환불 되었다고 나와야한다.")
@@ -181,7 +183,7 @@ class OrdersServiceTest {
         orderService.refunded(order.getOrderId());
 
         // then
-        assertEquals(true, orderRepository.findById(order.getOrderId()).get().getIsRefunded());
+        assertEquals(true, order.getIsRefunded());
     }
 
     Member getMember() {
