@@ -22,6 +22,7 @@ public class OrderService {
     private final OrderNumberRepository orderNumberRepository;
     private final MemberRepository memberRepository;
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
 
     // 주문 생성, 주문 조회, 주문 환불
     @Transactional
@@ -57,6 +58,7 @@ public class OrderService {
                     .cardNumber(request.getCardNumber())
                     .build();
             orderRepository.save(order);
+            product.minus(cart.getCount());
 
             cartRepository.deleteById(cart.getCartId());
         });
@@ -70,6 +72,8 @@ public class OrderService {
     public void refunded(Long orderId) {
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFount::new);
+
         order.refunded();
+        order.getProduct().plus(order.getProductCount());
     }
 }

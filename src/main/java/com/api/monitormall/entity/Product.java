@@ -64,8 +64,12 @@ public class Product {
     }
 
     //==편의 메소드 ==
-    public void minus(int count) {
-        this.count = this.count - count;
+    public void minus(int orderCount) {
+        this.count = this.count - orderCount;
+    }
+
+    public void plus(int refundedCount) {
+        this.count = this.count + refundedCount;
     }
 
     public void edit(ProductEdit edit){

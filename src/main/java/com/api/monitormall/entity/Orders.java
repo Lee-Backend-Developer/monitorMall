@@ -45,16 +45,14 @@ public class Orders {
     private Boolean isRefunded = false; // 환불이면 true, 아니면 false
 
     @Builder
-    public Orders(OrderNumber orderNumber, Member member, Product product, int productCount, Delivery delivery, String deliveryAddress, int totalPrice, String cardNumber, Boolean isRefunded) {
+    public Orders(OrderNumber orderNumber, Member member, Product product, int productCount, String deliveryAddress, int totalPrice, String cardNumber) {
         this.orderNumber = orderNumber;
         this.member = member;
         this.product = product;
         this.productCount = productCount;
-        this.delivery = delivery;
         this.deliveryAddress = deliveryAddress;
         this.totalPrice = totalPrice;
         this.cardNumber = cardNumber;
-        this.isRefunded = isRefunded;
     }
 
 

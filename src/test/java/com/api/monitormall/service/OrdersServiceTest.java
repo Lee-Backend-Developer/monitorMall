@@ -1,6 +1,7 @@
 package com.api.monitormall.service;
 
 import com.api.monitormall.entity.*;
+import com.api.monitormall.exception.CountError;
 import com.api.monitormall.repository.*;
 import com.api.monitormall.request.OrderAdd;
 import org.junit.jupiter.api.AfterEach;
@@ -101,8 +102,35 @@ class OrdersServiceTest {
         orderService.orderAdd(request);
 
         // then
-        assertEquals(1, orderRepository.findOrders(member.getMemberId()).size());
+        List<Orders> orders = orderRepository.findOrders(member.getMemberId());
+        assertEquals(1, orders.size());
         assertEquals(cartRepository.findByMemberId(member.getMemberId()).size(), 0);
+        assertEquals(9, product.getCount());
+    }
+
+    @DisplayName("제품 수량보다 더 주문할 경우 오류가 발생해야한다.")
+    @Test
+    void orderAdd_X() {
+        // given
+        Member member = getMember();
+
+        Product product = getProduct();
+        Cart cart = Cart.builder()
+                .member(member)
+                .product(product)
+                .count(100)
+                .build();
+        cartRepository.save(cart);
+
+        OrderAdd request = OrderAdd.builder()
+                .memberId(member.getMemberId())
+                .cardNumber("1234-1234-1234-1234")
+                .build();
+
+        // expected
+        assertThrows(CountError.class, () -> {
+            orderService.orderAdd(request);
+        });
     }
 
     @DisplayName("여러개의 주문이 되어야한다.")
@@ -166,6 +194,32 @@ class OrdersServiceTest {
     @DisplayName("회원이 환불을 하였을때 환불 되었다고 나와야한다.")
     @Test
     void refunded_o() {
+        // given
+        OrderNumber orderNumber = new OrderNumber();
+        Member member = getMember();
+        Product product = getProduct();
+        Orders order = Orders.builder()
+                .orderNumber(orderNumber)
+                .member(member)
+                .product(product)
+                .productCount(2)
+                .deliveryAddress("경기도")
+                .totalPrice(product.getPrice())
+                .build();
+        orderRepository.save(order);
+        product.minus(2);
+
+        // when
+        orderService.refunded(order.getOrderId());
+
+        // then
+        assertEquals(10, product.getCount());
+        assertEquals(true, order.getIsRefunded());
+    }
+
+    @DisplayName("회원이 환불을 하였을때 수량도 되돌아가져야함")
+    @Test
+    void refunded_count_o() {
         // given
         OrderNumber orderNumber = new OrderNumber();
         Member member = getMember();
