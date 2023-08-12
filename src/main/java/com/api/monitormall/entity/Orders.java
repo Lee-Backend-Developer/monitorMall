@@ -31,7 +31,9 @@ public class Orders {
     private Member member;
 
     @ManyToOne
-    private Product product; // todo 여러개 상품가져오기 생각이 필요할듯
+    private Product product; // todo 여러개 상품가져오기 생각이 필요할듯민
+
+    private int productCount;
 
     @Enumerated(value = EnumType.STRING)
     private Delivery delivery = Delivery.SHIPMENT;
@@ -43,17 +45,20 @@ public class Orders {
     private Boolean isRefunded = false; // 환불이면 true, 아니면 false
 
     @Builder
-    public Orders(OrderNumber orderNumber, Member member, Product product, String deliveryAddress, int totalPrice, String cardNumber) {
+    public Orders(OrderNumber orderNumber, Member member, Product product, int productCount, Delivery delivery, String deliveryAddress, int totalPrice, String cardNumber, Boolean isRefunded) {
         this.orderNumber = orderNumber;
         this.member = member;
         this.product = product;
+        this.productCount = productCount;
+        this.delivery = delivery;
         this.deliveryAddress = deliveryAddress;
         this.totalPrice = totalPrice;
         this.cardNumber = cardNumber;
+        this.isRefunded = isRefunded;
     }
 
-    //== 편의 메소드 ==//
 
+    //== 편의 메소드 ==//
     public void setOrderNumber(OrderNumber orderNumber) {
         this.orderNumber = orderNumber;
         this.orderNumber.getOrderList().add(this);

@@ -51,6 +51,7 @@ public class OrderService {
                     .orderNumber(orderNumber)
                     .member(member)
                     .product(product)
+                    .productCount(cart.getCount())
                     .deliveryAddress(request.getDeliveryAddress())
                     .totalPrice(product.getPrice())
                     .cardNumber(request.getCardNumber())
