@@ -191,6 +191,37 @@ class OrdersServiceTest {
         assertEquals(Delivery.SHIPMENT, order.getDelivery());
     }
 
+    @DisplayName("회원이 주문한 상품을 관리자가 볼 수 있어야한다")
+    @Test
+    void getOrder_admin_o() {
+        // given
+        Member member = getMember();
+        Product product = getProduct();
+        Orders order = Orders.builder()
+                .member(member)
+                .product(product)
+                .productCount(1)
+                .deliveryAddress("경기도 어드곳")
+                .cardNumber("1234-1234-1234-1234")
+                .build();
+        orderRepository.save(order);
+        Product product2 = getProduct2();
+        Orders order2 = Orders.builder()
+                .member(member)
+                .product(product2)
+                .productCount(1)
+                .deliveryAddress("경기도 어드곳")
+                .cardNumber("1234-1234-1234-1234")
+                .build();
+        orderRepository.save(order2);
+
+        // when
+        List<Orders> findOrders = orderService.getOrders();
+
+        // then
+        assertEquals(2, findOrders.size());
+    }
+
     @DisplayName("회원이 환불을 하였을때 환불 되었다고 나와야한다.")
     @Test
     void refunded_o() {
@@ -216,6 +247,8 @@ class OrdersServiceTest {
         assertEquals(10, product.getCount());
         assertEquals(true, order.getIsRefunded());
     }
+
+
 
     @DisplayName("회원이 환불을 하였을때 수량도 되돌아가져야함")
     @Test

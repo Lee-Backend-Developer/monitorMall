@@ -68,6 +68,10 @@ public class OrderService {
         return orderRepository.findOrders(memberId);
     }
 
+    public List<Orders> getOrders() {
+        return orderRepository.findAll();
+    }
+
     @Transactional
     public void refunded(Long orderId) {
         Orders order = orderRepository.findById(orderId)
