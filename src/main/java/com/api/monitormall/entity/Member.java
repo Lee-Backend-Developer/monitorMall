@@ -37,4 +37,8 @@ public class Member {
         this.password = edit.getPassword();
         this.address = edit.getAddress();
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

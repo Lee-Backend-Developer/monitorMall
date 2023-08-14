@@ -93,6 +93,27 @@ class MemberServiceTest {
 
     }
 
+    @DisplayName("비밀번호가 수정이 되어야한다.")
+    @Test
+    void password_change_O() {
+        // given
+        String changePass = "change";
+        Member member = Member.builder()
+                .loginId("hong1")
+                .password("1234")
+                .address("경기도 어느곳")
+                .name("홍길동")
+                .build();
+        memberRepository.save(member);
+
+        // when
+        memberService.passwordChange(member.getMemberId(), changePass);
+
+
+        // then
+        assertEquals(changePass, member.getPassword());
+    }
+
     @DisplayName("회원이 삭제가 되어야한다.")
     @Test
     void delete_O() {

@@ -46,6 +46,13 @@ public class MemberService {
     }
 
     @Transactional
+    public void passwordChange(Long memberId, String currentPassword) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFount::new);
+        member.setPassword(currentPassword);
+    }
+
+    @Transactional
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
     }
