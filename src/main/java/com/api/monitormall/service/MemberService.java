@@ -3,6 +3,7 @@ package com.api.monitormall.service;
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.exception.MemberNotFount;
 import com.api.monitormall.repository.MemberRepository;
+import com.api.monitormall.request.MemberEdit;
 import com.api.monitormall.request.MemberLogin;
 import com.api.monitormall.request.MemberRegister;
 import lombok.RequiredArgsConstructor;

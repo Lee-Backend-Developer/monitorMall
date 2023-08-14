@@ -1,4 +1,4 @@
-package com.api.monitormall.service;
+package com.api.monitormall.request;
 
 
 import lombok.Builder;

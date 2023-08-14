@@ -1,6 +1,6 @@
 package com.api.monitormall.entity;
 
-import com.api.monitormall.service.MemberEdit;
+import com.api.monitormall.request.MemberEdit;
 import lombok.*;
 
 import javax.persistence.Entity;
