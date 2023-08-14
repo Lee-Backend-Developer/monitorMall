@@ -1,6 +1,7 @@
 package com.api.monitormall.service;
 
 import com.api.monitormall.entity.Member;
+import com.api.monitormall.exception.DuplicationMember;
 import com.api.monitormall.exception.MemberNotFount;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.request.MemberEdit;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,13 @@ public class MemberService {
 
     @Transactional
     public void register(MemberRegister request) {
+        // 같은 아이디가 있는지 검증
+        String loginId = request.getLoginId();
+        Optional<Member> findLoginId = memberRepository.findByLoginId(loginId);
+        if(findLoginId.isPresent()) {
+            throw new DuplicationMember();
+        }
+
         Member member = Member.builder()
                 .name(request.getName())
                 .address(request.getAddress())

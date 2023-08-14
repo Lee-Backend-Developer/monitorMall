@@ -1,6 +1,7 @@
 package com.api.monitormall.service;
 
 import com.api.monitormall.entity.Member;
+import com.api.monitormall.exception.DuplicationMember;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.request.MemberEdit;
 import com.api.monitormall.request.MemberLogin;
@@ -32,12 +33,35 @@ class MemberServiceTest {
                 .password("1234")
                 .build();
 
-
         // when
         memberService.register(request);
 
         // then
         assertEquals(1, memberRepository.count());
+    }
+
+    @DisplayName("중복된 아이디가 있는면 에러가 나와야한다")
+    @Test
+    void duplication_O() {
+        // given
+        Member createMember = Member.builder()
+                .loginId("hong1")
+                .password("1234")
+                .address("경기도 어느곳")
+                .name("홍길동")
+                .build();
+        memberRepository.save(createMember);
+
+        MemberRegister request = MemberRegister.builder()
+                .name("홍길동")
+                .loginId("hong1")
+                .password("1234")
+                .build();
+
+        // expected
+        assertThrows(DuplicationMember.class, () -> {
+            memberService.register(request);
+        });
     }
 
     @DisplayName("로그인이 되어야한다")
