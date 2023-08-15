@@ -3,10 +3,13 @@ package com.api.monitormall.request;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ProductCreate {
     // 기본 정보
     private String name;
+    private Date productLaunchDate;
     private int price;
     private String brand;
     private double inch;
@@ -27,8 +30,9 @@ public class ProductCreate {
     private String img05;
 
     @Builder
-    public ProductCreate(String name, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
+    public ProductCreate(String name, Date productLaunchDate, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
         this.name = name;
+        this.productLaunchDate = productLaunchDate;
         this.price = price;
         this.brand = brand;
         this.inch = inch;

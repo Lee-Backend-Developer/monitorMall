@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import java.util.Date;
+
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -23,6 +25,8 @@ public class Product {
 
     // 기본 정보
     private String name;
+    private Date createDate = new Date();
+    private Date productLaunchDate;
     private int count;
     private int price;
     private String brand;
@@ -44,8 +48,9 @@ public class Product {
     private String img05;
 
     @Builder
-    public Product(String name, int count, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
+    public Product(String name, Date productLaunchDate, int count, int price, String brand, double inch, boolean speaker, boolean usb, boolean vga, boolean dvi, boolean hdmi, boolean dp, String img01, String img02, String img03, String img04, String img05) {
         this.name = name;
+        this.productLaunchDate = productLaunchDate;
         this.count = count;
         this.price = price;
         this.brand = brand;
