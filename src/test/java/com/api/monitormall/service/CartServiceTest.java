@@ -37,39 +37,9 @@ class CartServiceTest {
 
     @BeforeEach
     void create() {
-        Member member = Member.builder()
-                .loginId("hong1")
-                .password("1234")
-                .address("경기도 어느곳")
-                .name("홍길동")
-                .build();
-        memberRepository.save(member);
-
-        Product product = Product.builder()
-                .name("테스트 27인치")
-                .price(300000)
-                .count(5)
-                .brand("dell")
-                .inch(27)
-                .speaker(true)
-                .usb(true)
-                .dp(true)
-                .img01("/image/product.jpg")
-                .build();
-        productRepository.save(product);
-
-        Product product02 = Product.builder()
-                .name("테스트 32인치")
-                .price(500000)
-                .count(10)
-                .brand("dell")
-                .inch(32)
-                .speaker(true)
-                .usb(true)
-                .dp(true)
-                .img01("/image/product02.jpg")
-                .build();
-        productRepository.save(product02);
+        getMember();
+        getProduct("테스트 27인치", 300000, 5, "dell", 27, true, true, true, "/image/product.jpg");
+        getProduct("테스트 32인치", 500000, 10, "dell", 27, true, true, true, "/image/product02.jpg");
     }
 
     @AfterEach
@@ -117,9 +87,11 @@ class CartServiceTest {
         CartAdd cart = new CartAdd(memberId, cartProduct1, cartProduct2);
 
         // expected
-        assertThrows(CountError.class, () -> {
+        String message = assertThrows(CountError.class, () -> {
             cartService.addCart(cart);
-        });
+        }).getMessage();
+
+        assertEquals("현재 재고 5개 입니다. 이 보다 많이 상품을 담을수 없습니다.", message);
     }
 
     @DisplayName("카트 가져오기")
@@ -127,7 +99,7 @@ class CartServiceTest {
     void getCart_O() {
         // given
         Member member = getMember();
-        Product product = getProduct();
+        Product product = getProduct("테스트 27인치", 300000, 5, "dell", 27, true, true, true, "/image/product.jpg");
 
         Cart cart = Cart.builder()
                 .member(member)
@@ -150,7 +122,7 @@ class CartServiceTest {
     void cartCntEdit_O() {
         // given
         Member member = getMember();
-        Product product = getProduct();
+        Product product = getProduct("테스트 27인치", 300000, 5, "dell", 27, true, true, true, "/image/product.jpg");
 
         Cart cart = Cart.builder()
                 .member(member)
@@ -171,7 +143,7 @@ class CartServiceTest {
     void cartDelete_O() {
         // given
         Member member = getMember();
-        Product product = getProduct();
+        Product product = getProduct("테스트 27인치", 300000, 5, "dell", 27, true, true, true, "/image/product.jpg");
 
         Cart cart = Cart.builder()
                 .member(member)
@@ -189,11 +161,28 @@ class CartServiceTest {
 
 
     Member getMember() {
-        return memberRepository.findAll().get(0);
+        Member member = Member.builder()
+                .loginId("hong1")
+                .password("1234")
+                .address("경기도 어느곳")
+                .name("홍길동")
+                .build();
+        return memberRepository.save(member);
     }
 
-    Product getProduct() {
-        return productRepository.findAll().get(0);
+    Product getProduct(String name, int price, int count, String brand, int inch, boolean speaker, boolean usb, boolean dp, String img01) {
+        Product product = Product.builder()
+                .name(name)
+                .price(price)
+                .count(count)
+                .brand(brand)
+                .inch(inch)
+                .speaker(speaker)
+                .usb(usb)
+                .dp(dp)
+                .img01(img01)
+                .build();
+        return productRepository.save(product);
     }
 
     List<Product> getProducts() {
