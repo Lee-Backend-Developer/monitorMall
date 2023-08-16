@@ -2,6 +2,7 @@ package com.api.monitormall.service;
 
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.exception.DuplicationMember;
+import com.api.monitormall.exception.MemberNotFount;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.request.MemberEdit;
 import com.api.monitormall.request.MemberLogin;
@@ -59,9 +60,11 @@ class MemberServiceTest {
                 .build();
 
         // expected
-        assertThrows(DuplicationMember.class, () -> {
+        String message = assertThrows(DuplicationMember.class, () -> {
             memberService.register(request);
-        });
+        }).getMessage();
+
+        assertEquals("중복된 아이디가 있습니다.", message);
     }
 
     @DisplayName("로그인이 되어야한다")
@@ -75,7 +78,6 @@ class MemberServiceTest {
                 .name("홍길동")
                 .build();
         memberRepository.save(createMember);
-
 
         // when
         MemberLogin request = MemberLogin.builder()
@@ -106,16 +108,14 @@ class MemberServiceTest {
                 .address("서울 어느곳")
                 .build();
 
-
         // when
         memberService.edit(member.getMemberId(), request);
 
-
         // then
-        assertEquals(member.getName(), "김길동");
-        assertEquals(member.getPassword(), "0000");
-        assertEquals(member.getAddress(), "서울 어느곳");
-
+        Member findMember = memberRepository.findById(member.getMemberId()).orElseThrow(MemberNotFount::new);
+        assertEquals(findMember.getName(), "김길동");
+        assertEquals(findMember.getPassword(), "0000");
+        assertEquals(findMember.getAddress(), "서울 어느곳");
     }
 
     @DisplayName("비밀번호가 수정이 되어야한다.")
@@ -134,9 +134,9 @@ class MemberServiceTest {
         // when
         memberService.passwordChange(member.getMemberId(), changePass);
 
-
         // then
-        assertEquals(changePass, member.getPassword());
+        Member findMember = memberRepository.findById(member.getMemberId()).orElseThrow(MemberNotFount::new);
+        assertEquals(changePass, findMember.getPassword());
     }
 
     @DisplayName("회원이 삭제가 되어야한다.")
@@ -154,7 +154,7 @@ class MemberServiceTest {
         // expected
         assertEquals(1, memberRepository.count());
         memberService.deleteMember(member.getMemberId());
-        assertEquals(0, memberRepository.count());
+        assertTrue(memberRepository.findAll().isEmpty());
     }
 
 }

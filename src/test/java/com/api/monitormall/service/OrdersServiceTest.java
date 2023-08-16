@@ -2,17 +2,17 @@ package com.api.monitormall.service;
 
 import com.api.monitormall.entity.*;
 import com.api.monitormall.exception.CountError;
+import com.api.monitormall.exception.OrderNotFount;
+import com.api.monitormall.exception.ProductNotFount;
 import com.api.monitormall.repository.*;
 import com.api.monitormall.request.OrderAdd;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class OrdersServiceTest {
+    private static final String CARD_NUMBER = "1234-1234-1234-1234";
+    private static final String DELIVERY = "경기도 어드곳";
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -32,43 +34,6 @@ class OrdersServiceTest {
     private OrderNumberRepository orderNumberRepository;
     @Autowired
     private OrderService orderService;
-
-    @BeforeEach
-    void create() {
-        Member member = Member.builder()
-                .loginId("hong1")
-                .password("1234")
-                .address("경기도 어느곳")
-                .name("홍길동")
-                .build();
-        memberRepository.save(member);
-
-        Product product = Product.builder()
-                .name("테스트 27인치")
-                .price(300000)
-                .count(10)
-                .brand("dell")
-                .inch(27)
-                .speaker(true)
-                .usb(true)
-                .dp(true)
-                .img01("/image/product.jpg")
-                .build();
-        Product product2 = Product.builder()
-                .name("테스트 32인치")
-                .count(10)
-                .price(600000)
-                .brand("LG")
-                .inch(32)
-                .speaker(true)
-                .usb(true)
-                .dp(true)
-                .img01("/image/LG_product.jpg")
-                .build();
-
-        productRepository.save(product);
-        productRepository.save(product2);
-    }
 
     @AfterEach
     void delete() {
@@ -85,7 +50,7 @@ class OrdersServiceTest {
         // given
         Member member = getMember();
 
-        Product product = getProduct();
+        Product product = getProduct("테스트 27인치", 300000, 10, "dell", 27, true, true, true, "/image/product.jpg");
         Cart cart = Cart.builder()
                 .member(member)
                 .product(product)
@@ -95,7 +60,7 @@ class OrdersServiceTest {
 
         OrderAdd request = OrderAdd.builder()
                 .memberId(member.getMemberId())
-                .cardNumber("1234-1234-1234-1234")
+                .cardNumber(CARD_NUMBER)
                 .build();
 
         // when
@@ -104,8 +69,9 @@ class OrdersServiceTest {
         // then
         List<Orders> orders = orderRepository.findOrders(member.getMemberId());
         assertEquals(1, orders.size());
-        assertEquals(cartRepository.findByMemberId(member.getMemberId()).size(), 0);
-        assertEquals(9, product.getCount());
+        assertTrue(cartRepository.findByMemberId(member.getMemberId()).isEmpty());
+        Product findProduct = productRepository.findById(product.getProductId()).orElseThrow(ProductNotFount::new);
+        assertEquals(9, findProduct.getCount());
     }
 
     @DisplayName("제품 수량보다 더 주문할 경우 오류가 발생해야한다.")
@@ -114,7 +80,7 @@ class OrdersServiceTest {
         // given
         Member member = getMember();
 
-        Product product = getProduct();
+        Product product = getProduct("테스트 27인치", 300000, 10, "dell", 27, true, true, true, "/image/product.jpg");
         Cart cart = Cart.builder()
                 .member(member)
                 .product(product)
@@ -124,13 +90,15 @@ class OrdersServiceTest {
 
         OrderAdd request = OrderAdd.builder()
                 .memberId(member.getMemberId())
-                .cardNumber("1234-1234-1234-1234")
+                .cardNumber(CARD_NUMBER)
                 .build();
 
         // expected
-        assertThrows(CountError.class, () -> {
+        String errorMessage = assertThrows(CountError.class, () -> {
             orderService.orderAdd(request);
-        });
+        }).getMessage();
+
+        assertEquals("현재 재고 10개 입니다. 이 보다 많이 상품을 담을수 없습니다.", errorMessage);
     }
 
     @DisplayName("여러개의 주문이 되어야한다.")
@@ -138,8 +106,8 @@ class OrdersServiceTest {
     void orderAdds_O() {
         // given
         Member member = getMember();
-        Product product = getProduct();
-        Product product2 = getProduct2();
+        Product product = getProduct("테스트 27인치", 300000, 10, "dell", 27, true, true, true, "/image/product.jpg");
+        Product product2 = getProduct("테스트 32인치", 10, 600000, "LG", 32, true, true, true, "/image/LG_product.jpg");
 
         Cart cart = Cart.builder()
                 .member(member)
@@ -157,7 +125,7 @@ class OrdersServiceTest {
 
         OrderAdd request = OrderAdd.builder()
                 .memberId(member.getMemberId())
-                .cardNumber("1234-1234-1234-1234")
+                .cardNumber(CARD_NUMBER)
                 .build();
 
         // when
@@ -165,7 +133,7 @@ class OrdersServiceTest {
 
         // then
         assertEquals(2, orderRepository.findOrders(member.getMemberId()).size());
-        assertEquals(cartRepository.findByMemberId(member.getMemberId()).size(), 0);
+        assertTrue(cartRepository.findByMemberId(member.getMemberId()).isEmpty());
     }
 
     @DisplayName("회원이 주문한 상품을 볼 수 있어야한다")
@@ -173,22 +141,21 @@ class OrdersServiceTest {
     void getOrder_O() {
         // given
         Member member = getMember();
-        Product product = getProduct();
-        Orders order = Orders.builder()
+        Product product = getProduct("테스트 27인치", 300000, 10, "dell", 27, true, true, true, "/image/product.jpg");
+        Orders order = getOrder(Orders.builder()
                 .member(member)
                 .product(product)
-                .deliveryAddress("경기도 어드곳")
-                .cardNumber("1234-1234-1234-1234")
-                .build();
-        orderRepository.save(order);
+                .deliveryAddress(DELIVERY)
+                .cardNumber(CARD_NUMBER));
 
         // when
         Long memberId = member.getMemberId();
         orderService.getOrder(memberId);
 
         // then
-        assertEquals(product.getName(), order.getProduct().getName());
-        assertEquals(Delivery.SHIPMENT, order.getDelivery());
+        Orders findOrder = orderRepository.findById(order.getOrderId()).orElseThrow(OrderNotFount::new);
+        assertEquals(product.getName(), findOrder.getProduct().getName());
+        assertEquals(Delivery.SHIPMENT, findOrder.getDelivery());
     }
 
     @DisplayName("회원이 주문한 상품을 관리자가 볼 수 있어야한다")
@@ -196,24 +163,20 @@ class OrdersServiceTest {
     void getOrder_admin_o() {
         // given
         Member member = getMember();
-        Product product = getProduct();
-        Orders order = Orders.builder()
+        Product product = getProduct("테스트 27인치", 300000, 10, "dell", 27, true, true, true, "/image/product.jpg");
+        getOrder(Orders.builder()
                 .member(member)
                 .product(product)
                 .productCount(1)
-                .deliveryAddress("경기도 어드곳")
-                .cardNumber("1234-1234-1234-1234")
-                .build();
-        orderRepository.save(order);
-        Product product2 = getProduct2();
-        Orders order2 = Orders.builder()
+                .deliveryAddress(DELIVERY)
+                .cardNumber(CARD_NUMBER));
+        Product product2 = getProduct("테스트 32인치", 10, 600000, "LG", 32, true, true, true, "/image/LG_product.jpg");
+        getOrder(Orders.builder()
                 .member(member)
                 .product(product2)
                 .productCount(1)
-                .deliveryAddress("경기도 어드곳")
-                .cardNumber("1234-1234-1234-1234")
-                .build();
-        orderRepository.save(order2);
+                .deliveryAddress(DELIVERY)
+                .cardNumber(CARD_NUMBER));
 
         // when
         List<Orders> findOrders = orderService.getOrders();
@@ -222,22 +185,20 @@ class OrdersServiceTest {
         assertEquals(2, findOrders.size());
     }
 
-    @DisplayName("회원이 환불을 하였을때 환불 되었다고 나와야한다.")
+    @DisplayName("회원이 환불을 하였을때 환불 되어야하고 수량도 되돌아가져야한다.")
     @Test
     void refunded_o() {
         // given
         OrderNumber orderNumber = new OrderNumber();
         Member member = getMember();
-        Product product = getProduct();
-        Orders order = Orders.builder()
+        Product product = getProduct("테스트 27인치", 300000, 10, "dell", 27, true, true, true, "/image/product.jpg");
+        Orders order = getOrder(Orders.builder()
                 .orderNumber(orderNumber)
                 .member(member)
                 .product(product)
                 .productCount(2)
                 .deliveryAddress("경기도")
-                .totalPrice(product.getPrice())
-                .build();
-        orderRepository.save(order);
+                .totalPrice(product.getPrice()));
         product.minus(2);
 
         // when
@@ -245,43 +206,38 @@ class OrdersServiceTest {
 
         // then
         assertEquals(10, product.getCount());
-        assertEquals(true, order.getIsRefunded());
+        assertTrue(order.getIsRefunded());
     }
 
-
-
-    @DisplayName("회원이 환불을 하였을때 수량도 되돌아가져야함")
-    @Test
-    void refunded_count_o() {
-        // given
-        OrderNumber orderNumber = new OrderNumber();
-        Member member = getMember();
-        Product product = getProduct();
-        Orders order = Orders.builder()
-                .orderNumber(orderNumber)
-                .member(member)
-                .product(product)
-                .deliveryAddress("경기도")
-                .totalPrice(product.getPrice())
+    private Orders getOrder(Orders.OrdersBuilder orderNumber) {
+        Orders order = orderNumber
                 .build();
-        orderRepository.save(order);
-
-        // when
-        orderService.refunded(order.getOrderId());
-
-        // then
-        assertEquals(true, order.getIsRefunded());
+        return orderRepository.save(order);
     }
 
-    Member getMember() {
-        return memberRepository.findAll().get(0);
+    private Member getMember() {
+        Member member = Member.builder()
+                .loginId("hong1")
+                .password("1234")
+                .address(DELIVERY)
+                .name("홍길동")
+                .build();
+        return memberRepository.save(member);
     }
 
-    Product getProduct() {
-        return productRepository.findAll().get(0);
-    }
+    private Product getProduct(String name, int price, int count, String brand, int inch, boolean speaker, boolean usb, boolean dp, String img01) {
+        Product product = Product.builder()
+                .name(name)
+                .price(price)
+                .count(count)
+                .brand(brand)
+                .inch(inch)
+                .speaker(speaker)
+                .usb(usb)
+                .dp(dp)
+                .img01(img01)
+                .build();
 
-    Product getProduct2() {
-        return  productRepository.findAll().get(1);
+        return productRepository.save(product);
     }
 }

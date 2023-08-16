@@ -1,6 +1,7 @@
 package com.api.monitormall.service;
 
 import com.api.monitormall.entity.Product;
+import com.api.monitormall.exception.ProductNotFount;
 import com.api.monitormall.repository.ProductRepository;
 import com.api.monitormall.request.ProductCreate;
 import com.api.monitormall.request.ProductEdit;
@@ -37,7 +38,6 @@ class ProductServiceTest {
                 .img01("/image/product.jpg")
                 .build();
 
-
         // when
         productService.createProduct(request);
 
@@ -49,17 +49,7 @@ class ProductServiceTest {
     @Test
     void edit_O() {
         // given
-        Product product = Product.builder()
-                .name("테스트 27인치")
-                .price(300000)
-                .brand("dell")
-                .inch(27)
-                .speaker(true)
-                .usb(true)
-                .dp(true)
-                .img01("/image/product.jpg")
-                .build();
-        productRepository.save(product);
+        Product product = getProduct();
 
         ProductEdit request = ProductEdit.builder()
                 .name(product.getName())
@@ -77,13 +67,25 @@ class ProductServiceTest {
         productService.edit(product.getProductId(), request);
 
         // then
-        assertEquals(request.getName(), "수정이 되었습니다.");
+        Product findProduct = productRepository.findById(product.getProductId()).orElseThrow(ProductNotFount::new);
+        assertEquals(findProduct.getName(), "수정이 되었습니다.");
     }
 
     @DisplayName("삭제가 되어야함")
     @Test
     void delete_O() {
         // given
+        Product product = getProduct();
+
+        // when
+        Long productId = product.getProductId();
+        productService.deleteProduct(productId);
+
+        // then
+        assertEquals(0, productRepository.count());
+    }
+
+    private Product getProduct() {
         Product product = Product.builder()
                 .name("테스트 27인치")
                 .price(300000)
@@ -95,12 +97,6 @@ class ProductServiceTest {
                 .img01("/image/product.jpg")
                 .build();
         productRepository.save(product);
-
-        // when
-        Long productId = product.getProductId();
-        productService.deleteProduct(productId);
-
-        // then
-        assertEquals(0, productRepository.count());
+        return product;
     }
 }
