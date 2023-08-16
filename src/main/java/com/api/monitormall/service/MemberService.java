@@ -59,7 +59,7 @@ public class MemberService {
     public void passwordChange(Long memberId, String currentPassword) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFount::new);
-        member.setPassword(currentPassword);
+        member.changePassword(currentPassword);
     }
 
     @Transactional
