@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static com.api.monitormall.entity.QCart.*;
 
-@Slf4j
+
 @Repository
 @RequiredArgsConstructor
 public class CustomCartRepositoryImpl implements CustomCartRepository {

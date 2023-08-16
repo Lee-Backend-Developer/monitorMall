@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.api.monitormall.entity.QOrders.*;
 
-@Slf4j
+
 @Repository
 @RequiredArgsConstructor
 public class CustomOrderRepositoryImpl implements CustomOrderRepository {

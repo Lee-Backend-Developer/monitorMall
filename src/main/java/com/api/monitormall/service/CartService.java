@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -73,8 +73,6 @@ public class CartService {
 
         // 상품에 수량보다 더 카트에 담을경우 에러
         long countChk = product.getCount() - count;
-        log.info("countChk => {}", countChk);
-        log.info("product count => {}", product.getCount());
 
         if(countChk < 0 ) {
             throw new CountError(product.getCount());

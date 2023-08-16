@@ -1,12 +1,11 @@
 package com.api.monitormall.entity;
 
-import lombok.*;
-import org.springframework.lang.Nullable;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Entity
 @Getter
