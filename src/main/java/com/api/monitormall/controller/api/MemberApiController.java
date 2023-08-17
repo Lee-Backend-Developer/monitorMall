@@ -5,37 +5,32 @@ import com.api.monitormall.request.MemberLogin;
 import com.api.monitormall.request.MemberRegister;
 import com.api.monitormall.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/member")
 @RestController
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberApiController {
     private final MemberService memberService;
 
     //회원가입
     @PostMapping("register")
-    public void register(MemberRegister request) {
+    public void register(@RequestBody MemberRegister request) {
         memberService.register(request);
     }
 
-    @PostMapping("login")
-    public void login(MemberLogin memberLogin) {
+    @GetMapping ("login")
+    public void login(@RequestBody MemberLogin memberLogin) {
         memberService.login(memberLogin);
     }
 
-    @PostMapping("edit")
-    public void edit(MemberEdit memberEdit) {
-        Long memberId = 0L; // todo 잠시 임시값 나중에 세션으로 변경될 예정
+    @PutMapping("change/profile")
+    public void edit(@RequestBody MemberEdit memberEdit, @SessionAttribute(name = "memberId") Long memberId) {
         memberService.edit(memberId, memberEdit);
     }
 
-    @PostMapping("change/password")
-    public void changePassword(String changePassword) {
-        Long memberId = 0L; // todo 잠시 임시값 나중에 세션으로 변경될 예정
-
+    @PutMapping("change/password")
+    public void changePassword(@RequestBody String changePassword, @SessionAttribute(name = "memberId") Long memberId) {
         memberService.passwordChange(memberId, changePassword);
     }
 }
