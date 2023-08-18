@@ -38,3 +38,6 @@ out/
 
 ### Query Dsl ###
 src/main/generated/com/api/monitormall/entity/*.java
+
+### application-prod.yml
+src/main/resources/application-prod.yml
