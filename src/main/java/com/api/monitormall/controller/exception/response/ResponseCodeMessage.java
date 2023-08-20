@@ -1,4 +1,4 @@
-package com.api.monitormall.controller.api.response;
+package com.api.monitormall.controller.exception.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -18,6 +18,12 @@ public class ResponseCodeMessage {
     }
 
     public static ResponseCodeMessage duplication(String message) {
-        return new ResponseCodeMessage(HttpStatus.BAD_REQUEST.value(), message);
+        return new ResponseCodeMessage(HttpStatus.UNAUTHORIZED.value(), message);
     }
+
+    public static ResponseCodeMessage notFound(String message) {
+        return new ResponseCodeMessage(HttpStatus.NOT_FOUND.value(), message);
+    }
+
+
 }

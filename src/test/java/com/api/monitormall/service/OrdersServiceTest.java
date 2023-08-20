@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -153,7 +154,7 @@ class OrdersServiceTest {
         orderService.getOrder(memberId);
 
         // then
-        Orders findOrder = orderRepository.findById(order.getOrderId()).orElseThrow(OrderNotFount::new);
+        Orders findOrder = orderRepository.findById(order.getOrderId()).orElseThrow(EntityNotFoundException::new);
         assertEquals(product.getName(), findOrder.getProduct().getName());
         assertEquals(Delivery.SHIPMENT, findOrder.getDelivery());
     }

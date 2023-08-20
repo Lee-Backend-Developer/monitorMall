@@ -1,4 +1,4 @@
-package com.api.monitormall.controller.api;
+package com.api.monitormall.controller;
 
 import com.api.monitormall.request.MemberEdit;
 import com.api.monitormall.request.MemberLogin;
@@ -19,7 +19,7 @@ public class MemberApiController {
         memberService.register(request);
     }
 
-    @GetMapping ("login")
+    @GetMapping("login")
     public void login(@RequestBody MemberLogin memberLogin) {
         memberService.login(memberLogin);
     }
@@ -33,4 +33,7 @@ public class MemberApiController {
     public void changePassword(@RequestBody String changePassword, @SessionAttribute(name = "memberId") Long memberId) {
         memberService.passwordChange(memberId, changePassword);
     }
+
+
+
 }

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public class OrderService {
     @Transactional
     public void orderAdd(OrderAdd request) {
         Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(MemberNotFount::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         List<Cart> carts = cartRepository.findByMemberId(request.getMemberId());
 
@@ -75,7 +76,7 @@ public class OrderService {
     @Transactional
     public void refunded(Long orderId) {
         Orders order = orderRepository.findById(orderId)
-                .orElseThrow(OrderNotFount::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         order.refunded();
         order.getProduct().plus(order.getProductCount());

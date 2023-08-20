@@ -1,4 +1,4 @@
-package com.api.monitormall.controller.api.response;
+package com.api.monitormall.controller.exception.response;
 
 import org.springframework.http.ResponseEntity;
 
@@ -27,6 +27,11 @@ public class CustomResponse {
     public static ResponseEntity<Object> duplication(String message) {
         ResponseCodeMessage responseInfo = ResponseCodeMessage.duplication(message);
         return new ResponseEntity<>(responseInfo, BAD_REQUEST);
+    }
+
+    public static ResponseEntity<Object> notFound(String message) {
+        ResponseCodeMessage responseInfo = ResponseCodeMessage.notFound(message);
+        return new ResponseEntity<>(responseInfo, NOT_FOUND);
     }
 
 

@@ -12,9 +12,11 @@ import com.api.monitormall.request.CartAdd;
 import com.api.monitormall.request.CartProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 
@@ -30,7 +32,7 @@ public class CartService {
     public void addCart(CartAdd request) {
         Member member = memberRepository
                 .findById(request.getMemberId())
-                .orElseThrow(MemberNotFount::new);
+                .orElseThrow(EntityNotFoundException::new);
 
         List<CartProduct> requestProducts = request.getProducts();
 
@@ -56,7 +58,7 @@ public class CartService {
     @Transactional
     public void cartCntEdit(Long cartId, Long productId, int cnt) {
         Cart cart = cartRepository.findCart(cartId, productId)
-                .orElseThrow(CartNotFount::new);
+                .orElseThrow(EntityNotFoundException::new);
         cart.setCount(cnt);
         //todo 카트 제품 수량 수정할 때 검증 구현해야됨
     }

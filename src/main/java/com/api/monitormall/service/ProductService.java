@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -47,7 +48,7 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long productId){
         Product product = productRepository.findById(productId)
-                .orElseThrow(ProductNotFount::new);
+                .orElseThrow(EntityNotFoundException::new);
         productRepository.delete(product);
     }
 
