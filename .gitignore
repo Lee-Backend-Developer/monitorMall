@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### Query Dsl ###
-src/main/generated/com/api/monitormall/entity/*.java
+src/main/generated/com/api/monitormall/entity
 
 ### application-prod.yml
 src/main/resources/application-prod.yml

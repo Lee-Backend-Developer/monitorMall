@@ -33,7 +33,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     // mysql
-    runtimeOnly 'com.mysql:mysql-connector-java'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
     // queryDSL 설정
     implementation "com.querydsl:querydsl-jpa"

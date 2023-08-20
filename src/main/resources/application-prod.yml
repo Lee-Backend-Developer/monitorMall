@@ -1,4 +1,0 @@
-spring:
-  datasource:
-    username: {"계정"}
-    password: {"password"}
