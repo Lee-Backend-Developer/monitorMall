@@ -2,7 +2,6 @@ package com.api.monitormall.service;
 
 import com.api.monitormall.entity.Member;
 import com.api.monitormall.exception.DuplicationMember;
-import com.api.monitormall.exception.MemberNotFount;
 import com.api.monitormall.repository.MemberRepository;
 import com.api.monitormall.request.MemberEdit;
 import com.api.monitormall.request.MemberLogin;
@@ -12,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -112,7 +113,7 @@ class MemberServiceTest {
         memberService.edit(member.getMemberId(), request);
 
         // then
-        Member findMember = memberRepository.findById(member.getMemberId()).orElseThrow(MemberNotFount::new);
+        Member findMember = memberRepository.findById(member.getMemberId()).orElseThrow(EntityNotFoundException::new);
         assertEquals(findMember.getName(), "김길동");
         assertEquals(findMember.getPassword(), "0000");
         assertEquals(findMember.getAddress(), "서울 어느곳");
@@ -135,7 +136,7 @@ class MemberServiceTest {
         memberService.passwordChange(member.getMemberId(), changePass);
 
         // then
-        Member findMember = memberRepository.findById(member.getMemberId()).orElseThrow(MemberNotFount::new);
+        Member findMember = memberRepository.findById(member.getMemberId()).orElseThrow(EntityNotFoundException::new);
         assertEquals(changePass, findMember.getPassword());
     }
 
